@@ -1,3 +1,21 @@
 {
-  "title": "Vite + React"
+  "title": "Vite + React",
+  "signIn": "Sign In",
+  "signUp": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "forgetPassword": "Forget Password?",
+  "forgotPassword": "Forgot Password?",
+  "alreadyAccount": "Already have an account?",
+  "dontHaveAccount": "Don't have an account yet?",
+  "emailEmpty": "Please input your email address",
+  "emailInvalid": "Please enter a validate email!",
+  "passwordEmpty": "Please input your password",
+  "confirmPasswordEmpty": "Please confirm your password!",
+  "confirmPasswordNotMatch": "Passwords do not match!",
+  "enterEmail": "Enter your Email to reset password",
+  "send": "Send",
+  "sending": "Sending",
+  "emailAddress": "Email Address"
 }
