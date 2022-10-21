@@ -2,6 +2,8 @@ import { Button, Checkbox, Col, Form, Input, Row, Card } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch } from '../../store/hooks';
+import { fetchUsers } from '../../store/reducers/authReducer';
 const backgroundStyle = {
   backgroundImage: 'url(/img/bg-login.png)',
   backgroundRepeat: 'no-repeat',
@@ -12,6 +14,7 @@ const Login = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const showForgetPassword = true;
+  const dispatch = useAppDispatch();
   return (
     <div className='vh-100 bg-white'>
       <Row justify='center' className='align-items-stretch h-100'>
@@ -21,7 +24,7 @@ const Login = () => {
               <Col xs={24} sm={24} md={20} lg={12} xl={8}>
                 <h1>{t('signIn')}</h1>
                 <div className='mt-4'>
-                  <Form layout='vertical' name='login-form' onFinish={() => {}}>
+                  <Form layout='vertical' name='login-form' onFinish={() => dispatch(fetchUsers())}>
                     <Form.Item
                       name='email'
                       label={t('email')}
