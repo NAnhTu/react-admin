@@ -10,7 +10,7 @@ const backgroundStyle = {
   backgroundSize: 'cover',
 };
 
-const Login = () => {
+const SignIn = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const showForgetPassword = true;
@@ -124,4 +124,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignIn;

@@ -1,6 +1,10 @@
-import { Button, Checkbox, Col, Form, Input, Row, Card } from 'antd';
+import { Button, Col, Form, Input, Row } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { signUp } from '../../store/reducers/authReducer';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const backgroundStyle = {
   backgroundImage: 'url(/img/bg-login.png)',
@@ -8,9 +12,29 @@ const backgroundStyle = {
   backgroundSize: 'cover',
 };
 
-const Register = () => {
+const SignUp = () => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+  const { loading, error, currentRequestId } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
+
+  const onSignUp = () => {
+    form
+      .validateFields()
+      .then(async (values) => {
+        dispatch(signUp(values));
+      })
+      .catch((info) => {
+        console.log('Validate Failed:', info);
+      });
+  };
+
+  useEffect(() => {
+    if (currentRequestId && !error) {
+      navigate('/login');
+    }
+  }, [error, loading, navigate]);
 
   const rules = {
     email: [
@@ -54,11 +78,8 @@ const Register = () => {
             <Row justify='center'>
               <Col xs={24} sm={24} md={20} lg={12} xl={8}>
                 <h1>{t('signUp')}</h1>
-                <p>
-                  {t('alreadyAccount')} <a href='/login'>{t('signIn')}</a>
-                </p>
                 <div className='mt-4'>
-                  <Form form={form} layout='vertical' name='register-form' onFinish={() => {}}>
+                  <Form form={form} layout='vertical' name='register-form' onFinish={onSignUp}>
                     <Form.Item
                       name='email'
                       label={t('email')}
@@ -100,6 +121,9 @@ const Register = () => {
                     </Form.Item>
                   </Form>
                 </div>
+                <p>
+                  {t('alreadyAccount')} <a href='/login'>{t('signIn')}</a>
+                </p>
               </Col>
             </Row>
           </div>
@@ -140,4 +164,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default SignUp;
