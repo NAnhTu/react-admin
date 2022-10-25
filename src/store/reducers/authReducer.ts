@@ -1,116 +1,154 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { post } from '../../services';
+import { stat } from 'fs';
 
 export type AuthState = {
-  error: any;
-  loading: boolean;
-  isLoggedIn: boolean;
+  isFetching: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  errorMessage: string;
   currentRequestId: string | undefined;
 };
 
 const initialState: AuthState = {
-  error: null,
-  loading: false,
-  isLoggedIn: false,
+  isFetching: false,
+  isSuccess: false,
+  isError: false,
+  errorMessage: '',
   currentRequestId: undefined,
 };
-
-export const fetchUsers = createAsyncThunk(
-  'users/fetchUsers',
-  async (_arg, { getState, requestId }) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { currentRequestId, loading } = getState().auth;
-
-    if (!loading || requestId !== currentRequestId) {
-      return;
-    }
-
-    const response = post('/auth/register', {
-      body: {
-        email: 'tuna061299@gmail.com',
-        password: '12345',
-      },
-    });
-    console.log(response);
-
-    // const response = await fetch(API_URL);
-    // const json = await response.json();
-    // json.splice(10);
-    // await sleep(1000);
-    // return json;
-  },
-);
-
 export const signUp = createAsyncThunk(
-  'users/register',
-  async (params: object, { getState, requestId }) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const { currentRequestId, loading } = getState().auth;
+  'auth/sign-up',
+  async (params: object, { getState, requestId, rejectWithValue }) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const { currentRequestId, isFetching } = getState().auth;
 
-    if (!loading || requestId !== currentRequestId) {
-      return;
+      if (!isFetching || requestId !== currentRequestId) {
+        return;
+      }
+      const response = await post('/auth/register', {
+        body: params,
+      });
+      if (response.status === 201) {
+        return response;
+      } else {
+        return rejectWithValue(response.data);
+      }
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return rejectWithValue(e.response.data);
     }
-
-    await post('/auth/register', {
-      body: params,
-    });
   },
 );
 
-const usersSlice = createSlice({
-  name: 'users',
+export const signIn = createAsyncThunk(
+  'auth/sign-in',
+  async (params: object, { getState, requestId, rejectWithValue }) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const { currentRequestId, isFetching } = getState().auth;
+
+      if (!isFetching || requestId !== currentRequestId) {
+        return;
+      }
+      const response = await post('/auth/sign-in', {
+        body: params,
+      });
+      if (response.status === 200) {
+        return response;
+      } else {
+        return rejectWithValue(response.data);
+      }
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return rejectWithValue(e.response.data);
+    }
+  },
+);
+
+const authSlice = createSlice({
+  name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    clearState: (state) => {
+      state.isError = false;
+      state.isFetching = false;
+      state.isSuccess = false;
+      return state;
+    },
+  },
   extraReducers: {
-    [fetchUsers.pending.type]: (state, action) => {
-      if (!state.loading) {
-        state.loading = true;
-        state.currentRequestId = action.meta.requestId;
+    [signUp.pending.type]: (state, { meta }) => {
+      const { requestId } = meta;
+      if (!state.isFetching) {
+        state.errorMessage = '';
+        state.isError = false;
+        state.isFetching = true;
+        state.isSuccess = false;
+        state.currentRequestId = requestId;
       }
     },
-    [fetchUsers.fulfilled.type]: (state, action) => {
-      const { requestId } = action.meta;
-      if (state.loading && state.currentRequestId === requestId) {
-        state.loading = false;
-        state.isLoggedIn = true;
+    [signUp.fulfilled.type]: (state, { meta }) => {
+      const { requestId } = meta;
+      if (state.isFetching && state.currentRequestId === requestId) {
+        state.isError = false;
+        state.isSuccess = true;
+        state.isFetching = false;
+        state.errorMessage = '';
         state.currentRequestId = undefined;
       }
     },
-    [fetchUsers.rejected.type]: (state, action) => {
-      const { requestId } = action.meta;
-      if (state.loading && state.currentRequestId === requestId) {
-        state.loading = false;
-        state.isLoggedIn = false;
-        state.error = action.error;
+    [signUp.rejected.type]: (state, { payload, meta }) => {
+      const { requestId } = meta;
+      if (state.isFetching && state.currentRequestId === requestId) {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isFetching = false;
+        state.errorMessage = payload?.message;
         state.currentRequestId = undefined;
       }
     },
-    [signUp.pending.type]: (state, action) => {
-      if (!state.loading) {
-        state.loading = true;
-        state.error = '';
-        state.currentRequestId = action.meta.requestId;
+    [signIn.pending.type]: (state, { meta }) => {
+      const { requestId } = meta;
+      if (!state.isFetching) {
+        state.errorMessage = '';
+        state.isError = false;
+        state.isFetching = true;
+        state.isSuccess = false;
+        state.currentRequestId = requestId;
       }
     },
-    [signUp.fulfilled.type]: (state, action) => {
-      const { requestId } = action.meta;
-      if (state.loading && state.currentRequestId === requestId) {
-        state.loading = false;
-        state.error = '';
+    [signIn.fulfilled.type]: (state, { payload, meta }) => {
+      const { requestId } = meta;
+      const { accessToken, refreshToken } = payload.data;
+      if (state.isFetching && state.currentRequestId === requestId) {
+        state.isError = false;
+        state.isSuccess = true;
+        state.isFetching = false;
+        state.errorMessage = '';
         state.currentRequestId = undefined;
+        localStorage.setItem('token', accessToken);
+        localStorage.setItem('refresh-token', refreshToken);
       }
     },
-    [signUp.rejected.type]: (state, action) => {
-      const { requestId } = action.meta;
-      if (state.loading && state.currentRequestId === requestId) {
-        state.loading = false;
-        state.error = action.error;
+    [signIn.rejected.type]: (state, { payload, meta }) => {
+      const { requestId } = meta;
+      if (state.isFetching && state.currentRequestId === requestId) {
+        state.isError = true;
+        state.isSuccess = false;
+        state.isFetching = false;
+        state.errorMessage = payload?.message;
         state.currentRequestId = undefined;
       }
     },
   },
 });
 
-export default usersSlice.reducer;
+export default authSlice.reducer;
+
+export const { clearState } = authSlice.actions;

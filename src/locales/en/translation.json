@@ -12,10 +12,14 @@
   "emailEmpty": "Please input your email address",
   "emailInvalid": "Please enter a validate email!",
   "passwordEmpty": "Please input your password",
+  "incorrectPassword": "Incorrect password",
   "confirmPasswordEmpty": "Please confirm your password!",
   "confirmPasswordNotMatch": "Passwords do not match!",
   "enterEmail": "Enter your Email to reset password",
   "send": "Send",
   "sending": "Sending",
-  "emailAddress": "Email Address"
+  "emailAddress": "Email Address",
+  "userExisted": "The account already exists in the system.",
+  "userNotExist": "The account doesn't exists in the system.",
+  "error500": "There was an error during account creation, please try again."
 }

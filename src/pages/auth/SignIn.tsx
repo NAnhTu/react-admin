@@ -1,9 +1,10 @@
-import { Button, Checkbox, Col, Form, Input, Row, Card } from 'antd';
+import { Button, Col, Form, Input, Row } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useAppDispatch } from '../../store/hooks';
-import { fetchUsers } from '../../store/reducers/authReducer';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { clearState, signIn } from '../../store/reducers/authReducer';
+import { useEffect } from 'react';
 const backgroundStyle = {
   backgroundImage: 'url(/img/bg-login.png)',
   backgroundRepeat: 'no-repeat',
@@ -11,10 +12,60 @@ const backgroundStyle = {
 };
 
 const SignIn = () => {
+  const [form] = Form.useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const showForgetPassword = true;
   const dispatch = useAppDispatch();
+  const { isSuccess, isError, errorMessage } = useAppSelector((state) => state.auth);
+
+  const onSignIn = () => {
+    form
+      .validateFields()
+      .then(async (values) => {
+        dispatch(signIn(values));
+      })
+      .catch((info) => {
+        console.log('Validate Failed:', info);
+      });
+  };
+
+  useEffect(() => {
+    return () => {
+      dispatch(clearState());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(clearState());
+      navigate('/');
+    }
+    if (isError) {
+      dispatch(clearState());
+    }
+  }, [isSuccess, isError]);
+
+  const rules = {
+    email: [
+      {
+        required: true,
+        message: t('emailEmpty'),
+      },
+      {
+        required: true,
+        type: 'email',
+        message: t('emailInvalid'),
+      },
+    ],
+    password: [
+      {
+        required: true,
+        message: t('passwordEmpty'),
+      },
+    ],
+  };
+
   return (
     <div className='vh-100 bg-white'>
       <Row justify='center' className='align-items-stretch h-100'>
@@ -23,8 +74,9 @@ const SignIn = () => {
             <Row justify='center'>
               <Col xs={24} sm={24} md={20} lg={12} xl={8}>
                 <h1>{t('signIn')}</h1>
+                {errorMessage && <p className='text-error'>{t(errorMessage)}</p>}
                 <div className='mt-4'>
-                  <Form layout='vertical' name='login-form' onFinish={() => dispatch(fetchUsers())}>
+                  <Form form={form} layout='vertical' name='signin-form' onFinish={onSignIn}>
                     <Form.Item
                       name='email'
                       label={t('email')}
@@ -34,6 +86,7 @@ const SignIn = () => {
                           message: t('emailEmpty'),
                         },
                         {
+                          required: true,
                           type: 'email',
                           message: t('emailInvalid'),
                         },
@@ -63,12 +116,7 @@ const SignIn = () => {
                           )}
                         </div>
                       }
-                      rules={[
-                        {
-                          required: true,
-                          message: t('passwordEmpty'),
-                        },
-                      ]}
+                      rules={rules.password}
                     >
                       <Input.Password prefix={<LockOutlined className='text-primary' />} />
                     </Form.Item>
@@ -82,7 +130,7 @@ const SignIn = () => {
                   </Form>
                 </div>
                 <p>
-                  Don&apos;t have an account yet? <a href='/register'>Sign Up</a>
+                  Don&apos;t have an account yet? <a href='/sign-up'>Sign Up</a>
                 </p>
               </Col>
             </Row>

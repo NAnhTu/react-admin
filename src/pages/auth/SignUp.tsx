@@ -2,7 +2,7 @@ import { Button, Col, Form, Input, Row } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { signUp } from '../../store/reducers/authReducer';
+import { clearState, signUp } from '../../store/reducers/authReducer';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,8 +16,14 @@ const SignUp = () => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { loading, error, currentRequestId } = useAppSelector((state) => state.auth);
+  const { isSuccess, isError, errorMessage } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
+
+  const initialValues = {
+    email: 'admin@gmail.com',
+    password: 'Admin12345',
+    confirm: 'Admin12345',
+  };
 
   const onSignUp = () => {
     form
@@ -31,10 +37,20 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    if (currentRequestId && !error) {
-      navigate('/login');
+    return () => {
+      dispatch(clearState());
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(clearState());
+      navigate('/sign-in');
     }
-  }, [error, loading, navigate]);
+    if (isError) {
+      dispatch(clearState());
+    }
+  }, [isSuccess, isError]);
 
   const rules = {
     email: [
@@ -78,8 +94,15 @@ const SignUp = () => {
             <Row justify='center'>
               <Col xs={24} sm={24} md={20} lg={12} xl={8}>
                 <h1>{t('signUp')}</h1>
+                {errorMessage && <p className='text-error'>{t(errorMessage)}</p>}
                 <div className='mt-4'>
-                  <Form form={form} layout='vertical' name='register-form' onFinish={onSignUp}>
+                  <Form
+                    form={form}
+                    layout='vertical'
+                    name='signup-form'
+                    initialValues={initialValues}
+                    onFinish={onSignUp}
+                  >
                     <Form.Item
                       name='email'
                       label={t('email')}
@@ -122,7 +145,7 @@ const SignUp = () => {
                   </Form>
                 </div>
                 <p>
-                  {t('alreadyAccount')} <a href='/login'>{t('signIn')}</a>
+                  {t('alreadyAccount')} <a href='/sign-in'>{t('signIn')}</a>
                 </p>
               </Col>
             </Row>

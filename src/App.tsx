@@ -1,29 +1,32 @@
-import { useEffect } from 'react';
 import './App.css';
-import { useAppSelector } from './store/hooks';
-import { RootState } from './store';
-import { Layout } from 'antd';
-import Sidebar from './components/Sidebar';
-import AuthRouter from './router/AuthRouter';
-function App() {
-  const { isLoggedIn } = useAppSelector((state: RootState) => state.auth);
+import { Route, Routes } from 'react-router-dom';
+import PublicRouter from './router/PublicRouter';
+import SignIn from './pages/auth/SignIn';
+import SignUp from './pages/auth/SignUp';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import PrivateRouter from './router/PrivateRouter';
+import { useAppDispatch } from './store/hooks';
+import { useEffect } from 'react';
+import { checkUser } from './store/reducers/userReducer';
+function App(): JSX.Element {
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
-    console.log('isLoggedIn : ', isLoggedIn);
-  }, [isLoggedIn]);
-  if (isLoggedIn) {
-    return (
-      <Layout style={{ minHeight: '100vh' }}>
-        <Sidebar />
-        <Layout></Layout>
-      </Layout>
-    );
-  } else {
-    return (
-      <Layout style={{ minHeight: '100vh' }}>
-        <AuthRouter />
-      </Layout>
-    );
-  }
+    dispatch(checkUser());
+  }, []);
+
+  return (
+    <Routes>
+      <Route element={<PublicRouter />}>
+        <Route path='/sign-in' element={<SignIn />} />
+        <Route path='/sign-up' element={<SignUp />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+      </Route>
+      <Route element={<PrivateRouter />}>
+        <Route path='/' element={<div>Hello</div>} />
+      </Route>
+    </Routes>
+  );
 }
 
 export default App;
