@@ -1,24 +1,36 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { get, post } from '../../services';
-import { stat } from 'fs';
-import { signUp } from './authReducer';
 
-export type UserState = {
+type UserState = {
+  code: string;
+  name: string;
+  role: string;
+  token: string;
+};
+
+export type UserReducerState = {
   isSignedIn: boolean;
   isFetching: boolean;
   isSuccess: boolean;
   isError: boolean;
   errorMessage: string;
   currentRequestId: string | undefined;
+  currentUser: UserState;
 };
 
-const initialState: UserState = {
-  isSignedIn: false,
+const initialState: UserReducerState = {
+  isSignedIn: !!localStorage.getItem('token'),
   isFetching: false,
   isSuccess: false,
   isError: false,
   errorMessage: '',
   currentRequestId: undefined,
+  currentUser: {
+    code: '',
+    name: '',
+    role: '',
+    token: '',
+  },
 };
 
 export const checkUser = createAsyncThunk(
@@ -27,15 +39,17 @@ export const checkUser = createAsyncThunk(
     try {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      const { currentRequestId, isFetching } = getState().user;
+      const { currentRequestId, isFetching, currentUser } = getState().user;
 
       if (!isFetching || requestId !== currentRequestId) {
         return;
       }
-      const response = await get('/users/check-token');
+      const response = await get('/users/check-token', currentUser);
       if (response.status === 200) {
         return response;
       } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh-token');
         return rejectWithValue(response.data);
       }
     } catch (e) {
@@ -68,7 +82,7 @@ const userSlice = createSlice({
         state.currentRequestId = requestId;
       }
     },
-    [checkUser.fulfilled.type]: (state, { meta }) => {
+    [checkUser.fulfilled.type]: (state, { payload, meta }) => {
       const { requestId } = meta;
       if (state.isFetching && state.currentRequestId === requestId) {
         state.isSignedIn = true;
@@ -77,6 +91,7 @@ const userSlice = createSlice({
         state.isFetching = false;
         state.errorMessage = '';
         state.currentRequestId = undefined;
+        state.currentUser = payload.data;
       }
     },
     [checkUser.rejected.type]: (state, { payload, meta }) => {
@@ -88,6 +103,7 @@ const userSlice = createSlice({
         state.isFetching = false;
         state.errorMessage = payload?.message;
         state.currentRequestId = undefined;
+        state.currentUser = {} as UserState;
       }
     },
   },

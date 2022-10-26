@@ -12,7 +12,11 @@ const get = async (route: string, user?: { token: string }) => {
 
   if (user?.token) {
     headers.Authorization = `Bearer ${user.token}`;
+  } else {
+    const token = localStorage.getItem('token');
+    headers.Authorization = `Bearer ${token}`;
   }
+
   return apiClient({
     method: 'get',
     url: route,
@@ -27,7 +31,11 @@ const post = async (route: string, { body, user }: { body?: object; user?: objec
   };
   if (user?.token) {
     headers.Authorization = `Bearer ${user?.token}`;
+  } else {
+    const token = localStorage.getItem('token');
+    headers.Authorization = `Bearer ${token}`;
   }
+
   return apiClient({
     method: 'post',
     url: route,

@@ -5,15 +5,18 @@ import SignIn from './pages/auth/SignIn';
 import SignUp from './pages/auth/SignUp';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import PrivateRouter from './router/PrivateRouter';
-import { useAppDispatch } from './store/hooks';
+import { useAppDispatch, useAppSelector } from './store/hooks';
 import { useEffect } from 'react';
 import { checkUser } from './store/reducers/userReducer';
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
+  const { isSignedIn } = useAppSelector((state) => state.user);
 
   useEffect(() => {
-    dispatch(checkUser());
-  }, []);
+    if (isSignedIn) {
+      dispatch(checkUser());
+    }
+  }, [isSignedIn]);
 
   return (
     <Routes>
