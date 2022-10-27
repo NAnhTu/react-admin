@@ -8,6 +8,7 @@ import PrivateRouter from './router/PrivateRouter';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { useEffect } from 'react';
 import { checkUser } from './store/reducers/userReducer';
+import AppLayout from './layout/app-layout';
 function App(): JSX.Element {
   const dispatch = useAppDispatch();
   const { isSignedIn } = useAppSelector((state) => state.user);
@@ -26,7 +27,7 @@ function App(): JSX.Element {
         <Route path='/forgot-password' element={<ForgotPassword />} />
       </Route>
       <Route element={<PrivateRouter />}>
-        <Route path='/' element={<div>Hello</div>} />
+        <Route path='/' element={<AppLayout />} />
       </Route>
     </Routes>
   );
