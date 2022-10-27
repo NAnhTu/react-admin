@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { get, post } from '../../services';
+import { get } from '../../services';
 
 type UserState = {
   code: string;

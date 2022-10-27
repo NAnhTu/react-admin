@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { post } from '../../services';
-import { stat } from 'fs';
 
 export type AuthState = {
   isFetching: boolean;

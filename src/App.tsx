@@ -27,7 +27,7 @@ function App(): JSX.Element {
         <Route path='/forgot-password' element={<ForgotPassword />} />
       </Route>
       <Route element={<PrivateRouter />}>
-        <Route path='/' element={<AppLayout />} />
+        <Route path='/*' element={<AppLayout />} />
       </Route>
     </Routes>
   );

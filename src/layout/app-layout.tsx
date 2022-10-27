@@ -1,7 +1,7 @@
-import React from 'react';
 import { Layout } from 'antd';
 import HeaderNav from '../components/layout/HeaderNav';
 import Sidebar from '../components/layout/Sidebar';
+import Views from '../pages/views';
 
 const { Content } = Layout;
 
@@ -13,7 +13,9 @@ const AppLayout = () => {
         <Sidebar />
         <Layout className='app-layout'>
           <div className='app-content'>
-            <Content></Content>
+            <Content style={{ paddingLeft: '250px' }}>
+              <Views />
+            </Content>
           </div>
         </Layout>
       </Layout>
