@@ -43,34 +43,21 @@ const MenuContent: React.FC = () => {
   const items: MenuItem[] = [
     getItem(
       t('sidebar.dashboard'),
-      'sub1',
+      'dashboard_group',
       null,
       [getItem(t('sidebar.dashboard'), 'dashboards', <DashboardOutlined />)],
       'group',
     ),
     getItem(
-      'Navigation Two',
-      'sub2',
+      t('sidebar.apps'),
+      'app_group',
       null,
       [
-        getItem('Option 5', '5', <SettingOutlined />),
-        getItem('Option 6', '6', <SettingOutlined />),
-        getItem('Submenu', 'sub3', <SettingOutlined />, [
-          getItem('Option 7', '7'),
-          getItem('Option 8', '8'),
+        getItem(t('sidebar.apps.chat'), 'chat', <SettingOutlined />),
+        getItem(t('sidebar.apps.project'), 'project', <SettingOutlined />, [
+          getItem(t('sidebar.apps.project.list'), 'project/list'),
+          getItem(t('sidebar.apps.project.scrumboard'), 'project/scrumboard'),
         ]),
-      ],
-      'group',
-    ),
-    getItem(
-      'Navigation Three',
-      'sub4',
-      null,
-      [
-        getItem('Option 9', '9', <SettingOutlined />),
-        getItem('Option 10', '10', <SettingOutlined />),
-        getItem('Option 11', '11', <SettingOutlined />),
-        getItem('Option 12', '12', <SettingOutlined />),
       ],
       'group',
     ),

@@ -15,7 +15,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     if (isSignedIn) {
-      dispatch(checkUser());
+      // dispatch(checkUser());
     }
   }, [isSignedIn]);
 
