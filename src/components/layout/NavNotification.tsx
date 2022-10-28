@@ -55,12 +55,7 @@ const getNotificationBody = (list: Array<any>) => {
 };
 
 const NavNotification = () => {
-  const [visible, setVisible] = useState<boolean>(false);
   const [data, setData] = useState<Array<any>>([]);
-
-  const handleVisibleChange = (flag: boolean) => {
-    setVisible(flag);
-  };
 
   const notificationList = (
     <div className='nav-dropdown nav-notification'>
@@ -81,21 +76,20 @@ const NavNotification = () => {
     </div>
   );
 
+  const itemMenu = [
+    {
+      label: (
+        <Badge count={data.length}>
+          <BellOutlined className='nav-icon mx-auto' type='bell' />
+        </Badge>
+      ),
+      key: 'item-1',
+    },
+  ];
+
   return (
-    <Dropdown
-      placement='bottomRight'
-      overlay={notificationList}
-      onVisibleChange={handleVisibleChange}
-      visible={visible}
-      trigger={['click']}
-    >
-      <Menu mode='horizontal'>
-        <Menu.Item>
-          <Badge count={data.length}>
-            <BellOutlined className='nav-icon mx-auto' type='bell' />
-          </Badge>
-        </Menu.Item>
-      </Menu>
+    <Dropdown placement='bottomRight' overlay={notificationList} trigger={['click']}>
+      <Menu mode='horizontal' items={itemMenu}></Menu>
     </Dropdown>
   );
 };

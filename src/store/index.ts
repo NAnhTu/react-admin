@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './reducers/authReducer';
 import userReducer from './reducers/userReducer';
+import layoutReducer from './reducers/layoutReducer';
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
     user: userReducer,
+    layout: layoutReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });

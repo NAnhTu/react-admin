@@ -10,7 +10,12 @@ type MenuItem = Required<MenuProps>['items'][number];
 // submenu keys of first level
 const rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
 
-const MenuContent: React.FC = () => {
+type MenuContentProps = {
+  width: number;
+};
+
+const MenuContent = (props: MenuContentProps) => {
+  const { width } = props;
   const [openKeys, setOpenKeys] = useState(['sub1']);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -68,7 +73,7 @@ const MenuContent: React.FC = () => {
       mode='inline'
       openKeys={openKeys}
       onOpenChange={onOpenChange}
-      style={{ width: 250 }}
+      style={{ width: width }}
       items={items}
       onSelect={(item) => navigate(item.key)}
     />
