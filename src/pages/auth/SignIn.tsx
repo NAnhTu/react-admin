@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { clearState, signIn } from '../../store/reducers/authReducer';
 import { useEffect } from 'react';
+import { setSignedIn } from '../../store/reducers/userReducer';
 const backgroundStyle = {
   backgroundImage: 'url(/img/bg-login.png)',
   backgroundRepeat: 'no-repeat',
@@ -38,6 +39,7 @@ const SignIn = () => {
 
   useEffect(() => {
     if (isSuccess) {
+      dispatch(setSignedIn(true));
       dispatch(clearState());
       navigate('/');
     }
@@ -146,7 +148,7 @@ const SignIn = () => {
             </div>
             <Row justify='center'>
               <Col xs={0} sm={0} md={0} lg={20}>
-                <img className='img-fluid mb-5' src='/img/others/img-18.png' alt='' />
+                <img className='img-fluid mb-5' src='/img/img-19.png' alt='' />
                 <h1 className='text-white'>Welcome to emilus</h1>
                 <p className='text-white'>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus ullamcorper nisl

@@ -60,10 +60,42 @@ export const checkUser = createAsyncThunk(
   },
 );
 
+export const signOut = createAsyncThunk(
+  'user/sign-out',
+  async (_arg, { getState, requestId, rejectWithValue, dispatch }) => {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      // const { currentRequestId, isFetching, currentUser } = getState().user;
+      // if (!isFetching || requestId !== currentRequestId) {
+      //   return;
+      // }
+      // const response = await get('/users/check-token', currentUser);
+      localStorage.removeItem('token');
+      localStorage.removeItem('refresh-token');
+      dispatch(setSignedIn(false));
+      // if (response.status === 200) {
+      //   return response;
+      // } else {
+      //   localStorage.removeItem('token');
+      //   localStorage.removeItem('refresh-token');
+      //   return rejectWithValue(response.data);
+      // }
+    } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      return rejectWithValue(e.response.data);
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: 'users',
   initialState,
   reducers: {
+    setSignedIn: (state, { payload }) => {
+      state.isSignedIn = payload;
+    },
     clearState: (state) => {
       state.isError = false;
       state.isFetching = false;
@@ -111,4 +143,4 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const { clearState } = userSlice.actions;
+export const { setSignedIn, clearState } = userSlice.actions;

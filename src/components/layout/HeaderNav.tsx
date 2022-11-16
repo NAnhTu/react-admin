@@ -1,6 +1,11 @@
 import { Image, Layout, Menu } from 'antd';
 import { SIDEBAR_COLLAPSED_WIDTH, SIDEBAR_WIDTH } from '../../constants/ThemeConstant.js';
-import Icon, { MenuFoldOutlined, MenuUnfoldOutlined, SearchOutlined } from '@ant-design/icons';
+import Icon, {
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  SearchOutlined,
+  LogoutOutlined,
+} from '@ant-design/icons';
 import { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCollapsed, setDarkMode } from '../../store/reducers/layoutReducer';
@@ -9,6 +14,7 @@ import NavNotification from './NavNotification';
 import NavLanguage from './NavLanguage';
 import MixiGaming from '../../assets/mixigaming.png';
 import RefundGaming from '../../assets/refund_gaming.png';
+import { signOut } from '../../store/reducers/userReducer';
 const { Header } = Layout;
 
 const HeaderNav = () => {
@@ -91,6 +97,17 @@ const HeaderNav = () => {
             ></Menu>
             <NavNotification />
             <NavLanguage />
+            <Menu
+              mode='horizontal'
+              items={[
+                {
+                  label: (
+                    <LogoutOutlined className='nav-icon' onClick={() => dispatch(signOut())} />
+                  ),
+                  key: 'item-setting',
+                },
+              ]}
+            ></Menu>
           </div>
         </div>
       </div>
