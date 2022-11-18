@@ -23,21 +23,21 @@ const SearchInput = () => {
     setOptions([]);
   };
 
-  const autofocus = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    inputRef?.current?.focus();
-  };
+  // const autofocus = () => {
+  //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //   // @ts-ignore
+  //   inputRef?.current?.focus();
+  // };
 
-  if (true) {
-    autofocus();
-  }
+  // if (true) {
+  //   autofocus();
+  // }
 
   return (
     <AutoComplete
       ref={inputRef}
       className={`nav-search-input ${isMobile ? 'is-mobile' : ''} ${darkMode ? 'light' : ''}`}
-      dropdownClassName='nav-search-dropdown'
+      popupClassName='nav-search-dropdown'
       options={options}
       onSelect={onSelect}
       onSearch={onSearch}

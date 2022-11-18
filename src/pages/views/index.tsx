@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import Loading from '../../components/Loading';
 import { Route, Routes } from 'react-router-dom';
+import Chat from './chat';
 const Dashboard = lazy(() => import('./dashboard'));
 
 const Index = () => {
@@ -9,7 +10,7 @@ const Index = () => {
       <Routes>
         <Route path='/'>
           <Route path='dashboards' element={<Dashboard />} />
-          <Route path='chat' element={<div>Chat</div>} />
+          <Route path='chat/*' element={<Chat />} />
           <Route path='project'>
             <Route path='list' element={<div>List</div>} />
             <Route path='scrumboard' element={<div>Scrum Board</div>} />
