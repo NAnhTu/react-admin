@@ -27,7 +27,7 @@ export const signUp = createAsyncThunk(
       if (!isFetching || requestId !== currentRequestId) {
         return;
       }
-      const response = await post('/auth/register', {
+      const response = await post('/auth/sign-up', {
         body: params,
       });
       if (response.status === 201) {
